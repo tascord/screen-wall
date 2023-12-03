@@ -1,14 +1,17 @@
-[
-    {
-        "screen": 0,
-        "url": "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fpreview.redd.it%2F7ymrrxrzfmp31.jpg%3Fauto%3Dwebp%26s%3Dc6b111091fc515f46a5a8c02667f211ff70ea9b4&f=1&nofb=1&ipt=acf130afd0a30bd8c19e352718bc618e546174c4df061a88ac6611e8f2f24fa5&ipo=images"
-    },
-    {
-        "screen": 1,
-        "url": "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fi.ytimg.com%2Fvi%2FHzlkqRa6aMk%2Fmaxresdefault.jpg&f=1&nofb=1&ipt=73bb13ae599ba72fdbddf03c0e6f16b51bbf95380cbc044c0b26736cccb82927&ipo=images"
-    },
-    {
-        "screen": 2,
-        "url": "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fi.pinimg.com%2Foriginals%2Faa%2Fc3%2Ff7%2Faac3f7203eda8f6808d9130cd8af8950.jpg&f=1&nofb=1&ipt=77bb3b0b3a4e3c6fab3a6677b6020f9f8de66f49b63da0acdc6cbbb07a3b09a3&ipo=images"
-    }
-]
+{
+    "chrome_path": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+    "windows": [
+        {
+            "screen": 0,
+            "url": "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fpreview.redd.it%2F7ymrrxrzfmp31.jpg%3Fauto%3Dwebp%26s%3Dc6b111091fc515f46a5a8c02667f211ff70ea9b4&f=1&nofb=1&ipt=acf130afd0a30bd8c19e352718bc618e546174c4df061a88ac6611e8f2f24fa5&ipo=images"
+        },
+        {
+            "screen": 1,
+            "url": "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fi.ytimg.com%2Fvi%2FHzlkqRa6aMk%2Fmaxresdefault.jpg&f=1&nofb=1&ipt=73bb13ae599ba72fdbddf03c0e6f16b51bbf95380cbc044c0b26736cccb82927&ipo=images"
+        },
+        {
+            "screen": 2,
+            "url": "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fi.pinimg.com%2Foriginals%2Faa%2Fc3%2Ff7%2Faac3f7203eda8f6808d9130cd8af8950.jpg&f=1&nofb=1&ipt=77bb3b0b3a4e3c6fab3a6677b6020f9f8de66f49b63da0acdc6cbbb07a3b09a3&ipo=images"
+        }
+    ]
+}
