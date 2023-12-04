@@ -106,7 +106,7 @@ fn identify(location: String) {
         println!("Launching chrome on monitor #{index}");
         Command::new(location.clone())
             .arg(format!("--app=data:text/html,<html><body style=\"margin:0;padding:0;display:grid;place-items:center;\"><h1 style=\"font-size:7vmax;font-family:sans-serif;\">Screen: {}</h1></body></html>", index))
-            .arg(format!("--window-position={},{}", mon.left, mon.top))
+            .arg(format!("--window-position={},{}", mon.left + 10, mon.top + 10))
             .arg(format!("--user-data-dir={}", make_for(index)))
             .arg("--kiosk")
             .spawn()
@@ -128,7 +128,7 @@ fn spawn_chrome(config: AppConfig) {
 
         Command::new(config.chrome_path.clone())
             .arg(format!("--app={}", conf.url))
-            .arg(format!("--window-position={},{}", mon.left, mon.top))
+            .arg(format!("--window-position={},{}", mon.left + 10, mon.top + 10))
             .arg(format!("--user-data-dir={}", make_for(index)))
             .arg({
                 if args.contains(&String::from("-f")) {
