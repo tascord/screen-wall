@@ -9,13 +9,17 @@ mod types;
 
 fn main() {
     find_monitors();
+    let args: Vec<String> = std::env::args().collect();
+    let persist = !args.contains(&String::from("-p"));
 
     // Setup tempdir
-    if std::path::Path::new(&*TEMP_DIR).exists() {
+    if std::path::Path::new(&*TEMP_DIR).exists() && persist {
         std::fs::remove_dir_all(&*TEMP_DIR).unwrap();
     }
-    std::fs::create_dir_all(&*TEMP_DIR).unwrap();
-    let args: Vec<String> = std::env::args().collect();
+
+    if !std::path::Path::new(&*TEMP_DIR).exists() {
+        std::fs::create_dir_all(&*TEMP_DIR).unwrap();
+    }
 
     // If arg -i <location> is passed, identify monitors
     if args.len() > 2 && args[1] == "-i" {
@@ -88,6 +92,10 @@ fn find_monitors() {
 
 fn make_for(id: usize) -> String {
     let folder = format!("{}\\{}", &*TEMP_DIR, id);
+    if std::path::Path::new(&folder).exists() {
+        return folder;
+    }
+
     std::fs::create_dir_all(&folder).unwrap();
     folder
 }

@@ -6,6 +6,7 @@ Launch chromium (fullscreen) windows on multiple monitors. Useful for a screen w
 | --------- | ----------------------- | -------------------------------------------- |
 | -i <path> | Identify screen numbers | `scw.exe -i chrome.exe`                      |
 | -u <url>  | Load config from URL    | `scw.exe -i https://example.com/config.json` |
+| -p        | Persist profiles        | `scw.exe -p`                                 |
 
 ### config.json (see example)[/config.json]
 ```jsonc
