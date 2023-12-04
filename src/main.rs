@@ -116,6 +116,7 @@ fn identify(location: String) {
 
 fn spawn_chrome(config: AppConfig) {
     let monitor = MONITORS.lock().unwrap();
+    let args: Vec<String> = std::env::args().collect();
     println!("Found {} monitor(s)", monitor.len());
 
     for (index, conf) in config.windows.iter().enumerate() {
@@ -129,7 +130,13 @@ fn spawn_chrome(config: AppConfig) {
             .arg(format!("--app={}", conf.url))
             .arg(format!("--window-position={},{}", mon.left, mon.top))
             .arg(format!("--user-data-dir={}", make_for(index)))
-            .arg("--kiosk")
+            .arg({
+                if args.contains(&String::from("-f")) {
+                    "--start-fullscreen"
+                } else {
+                    "--kiosk"
+                }
+            })
             .spawn()
             .unwrap();
     }
