@@ -8,6 +8,32 @@ use types::AppConfig;
 mod types;
 
 fn main() {
+    find_monitors();
+
+    // Setup tempdir
+    if std::path::Path::new(&*TEMP_DIR).exists() {
+        std::fs::remove_dir_all(&*TEMP_DIR).unwrap();
+    }
+    std::fs::create_dir_all(&*TEMP_DIR).unwrap();
+    let args: Vec<String> = std::env::args().collect();
+
+    // If arg -i <location> is passed, identify monitors
+    if args.len() > 2 && args[1] == "-i" {
+        identify(args[2].clone());
+        return;
+    }
+
+    // If arg -u <url> is passed, get config from url
+    if args.len() > 2 && args[1] == "-u" {
+        let config = reqwest::blocking::get(&args[2])
+            .unwrap()
+            .json::<AppConfig>()
+            .unwrap();
+        println!("Got config from url");
+        spawn_chrome(config);
+        return;
+    }
+
     let file = std::fs::read_to_string("config.json").unwrap();
     let config: AppConfig = serde_json::from_str(&file).unwrap();
     spawn_chrome(config);
@@ -33,13 +59,7 @@ fn collect(mon: Monitor) {
     mons.push(mon);
 }
 
-fn spawn_chrome(config: AppConfig) {
-    if std::path::Path::new(&*TEMP_DIR).exists() {
-        std::fs::remove_dir_all(&*TEMP_DIR).unwrap();
-    }
-
-    std::fs::create_dir_all(&*TEMP_DIR).unwrap();
-
+fn find_monitors() {
     unsafe {
         unsafe extern "system" fn handler(
             _hmonitor: windows::Win32::Graphics::Gdi::HMONITOR,
@@ -64,23 +84,43 @@ fn spawn_chrome(config: AppConfig) {
             windows::Win32::Foundation::LPARAM(0),
         );
     }
+}
 
+fn make_for(id: usize) -> String {
+    let folder = format!("{}\\{}", &*TEMP_DIR, id);
+    std::fs::create_dir_all(&folder).unwrap();
+    folder
+}
+
+fn identify(location: String) {
+    let mon = MONITORS.lock().unwrap();
+    for (index, mon) in mon.iter().enumerate() {
+        println!("Launching chrome on monitor #{index}");
+        Command::new(location.clone())
+            .arg(format!("--app=data:text/html,<html><body style=\"margin:0;padding:0;display:grid;place-items:center;\"><h1 style=\"font-size:7vmax;font-family:sans-serif;\">Screen: {}</h1></body></html>", index))
+            .arg(format!("--window-position={},{}", mon.left, mon.top))
+            .arg(format!("--user-data-dir={}", make_for(index)))
+            .arg("--kiosk")
+            .spawn()
+            .unwrap();
+    }
+}
+
+fn spawn_chrome(config: AppConfig) {
     let monitor = MONITORS.lock().unwrap();
     println!("Found {} monitor(s)", monitor.len());
 
     for (index, conf) in config.windows.iter().enumerate() {
-        println!("Launching chrome on monitor #{index}");
+        println!("Launching chrome on monitor #{}", conf.screen);
 
         let mon = monitor
             .get(conf.screen as usize)
             .expect(format!("No monitor found for screen #{}", conf.screen).as_str());
-        let folder = format!("{}\\{}", &*TEMP_DIR, mon.left);
-        std::fs::create_dir_all(&folder).unwrap();
 
         Command::new(config.chrome_path.clone())
             .arg(format!("--app={}", conf.url))
             .arg(format!("--window-position={},{}", mon.left, mon.top))
-            .arg(format!("--user-data-dir={}", folder))
+            .arg(format!("--user-data-dir={}", make_for(index)))
             .arg("--kiosk")
             .spawn()
             .unwrap();
