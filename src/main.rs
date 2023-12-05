@@ -151,7 +151,7 @@ fn spawn_chrome(config: AppConfig) {
                     .unwrap();
             }
 
-            return;
+            continue;
         }
 
         Command::new(config.chrome_path.clone())
