@@ -20,7 +20,7 @@ Launch chromium (full-screen) windows on multiple monitors. Useful for a screen 
             "screen": 0,
 
             // Webpage URL to display
-            "url": "https://google.com"
+            "url": "https://google.com" // Add comma separated values to split the window
         },
     ]
 }

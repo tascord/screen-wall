@@ -47,6 +47,8 @@ fn main() {
 struct Monitor {
     left: i32,
     top: i32,
+    width: i32,
+    height: i32,
 }
 
 lazy_static! {
@@ -74,6 +76,8 @@ fn find_monitors() {
             collect(Monitor {
                 left: (*rect).left,
                 top: (*rect).top,
+                width: (*rect).right - (*rect).left,
+                height: (*rect).bottom - (*rect).top,
             });
 
             windows::Win32::Foundation::BOOL::from(true)
@@ -90,7 +94,7 @@ fn find_monitors() {
     }
 }
 
-fn make_for(id: usize) -> String {
+fn make_for(id: String) -> String {
     let folder = format!("{}\\{}", &*TEMP_DIR, id);
     if std::path::Path::new(&folder).exists() {
         return folder;
@@ -106,8 +110,8 @@ fn identify(location: String) {
         println!("Launching chrome on monitor #{index}");
         Command::new(location.clone())
             .arg(format!("--app=data:text/html,<html><body style=\"margin:0;padding:0;display:grid;place-items:center;\"><h1 style=\"font-size:7vmax;font-family:sans-serif;\">Screen: {}</h1></body></html>", index))
-            .arg(format!("--window-position={},{}", mon.left + 10, mon.top + 10))
-            .arg(format!("--user-data-dir={}", make_for(index)))
+            .arg(format!("--window-position={},{}", mon.left, mon.top))
+            .arg(format!("--user-data-dir={}", make_for(index.to_string())))
             .arg("--kiosk")
             .spawn()
             .unwrap();
@@ -126,10 +130,34 @@ fn spawn_chrome(config: AppConfig) {
             .get(conf.screen as usize)
             .expect(format!("No monitor found for screen #{}", conf.screen).as_str());
 
+        let url = conf.url.clone();
+        if url.contains(",") {
+            let urls = url.split(",").collect::<Vec<&str>>();
+            for (i, url) in urls.iter().enumerate() {
+                let height_slice = mon.height / urls.len() as i32;
+                Command::new(config.chrome_path.clone())
+                    .arg(format!("--app={}", url))
+                    .arg(format!(
+                        "--window-position={},{}",
+                        mon.left,
+                        mon.top + (height_slice * i as i32)
+                    ))
+                    .arg(format!("--window-size={},{}", mon.width, height_slice))
+                    .arg(format!(
+                        "--user-data-dir={}",
+                        make_for(format!("{index}-{i}"))
+                    ))
+                    .spawn()
+                    .unwrap();
+            }
+
+            return;
+        }
+
         Command::new(config.chrome_path.clone())
             .arg(format!("--app={}", conf.url))
-            .arg(format!("--window-position={},{}", mon.left + 10, mon.top + 10))
-            .arg(format!("--user-data-dir={}", make_for(index)))
+            .arg(format!("--window-position={},{}", mon.left, mon.top))
+            .arg(format!("--user-data-dir={}", make_for(index.to_string())))
             .arg({
                 if args.contains(&String::from("-f")) {
                     "--start-fullscreen"
