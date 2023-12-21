@@ -12,6 +12,8 @@ fn main() {
     let args: Vec<String> = std::env::args().collect();
     let persist = !args.contains(&String::from("-p"));
 
+    println!("Args: {:?}", args);
+
     // Setup tempdir
     if std::path::Path::new(&*TEMP_DIR).exists() && persist {
         std::fs::remove_dir_all(&*TEMP_DIR).unwrap();
@@ -136,6 +138,7 @@ fn spawn_chrome(config: AppConfig) {
             for (i, url) in urls.iter().enumerate() {
                 let height_slice = mon.height / urls.len() as i32;
                 Command::new(config.chrome_path.clone())
+                    .arg("--allow-running-insecure-content")
                     .arg(format!("--app={}", url))
                     .arg(format!(
                         "--window-position={},{}",
@@ -155,6 +158,7 @@ fn spawn_chrome(config: AppConfig) {
         }
 
         Command::new(config.chrome_path.clone())
+            .arg("--allow-running-insecure-content")
             .arg(format!("--app={}", conf.url))
             .arg(format!("--window-position={},{}", mon.left, mon.top))
             .arg(format!("--user-data-dir={}", make_for(index.to_string())))
